@@ -7,7 +7,7 @@ from helpers import Lector_Archivos
 from Analizador import Analizador
 import webbrowser
 
-
+Lector_Archivos()
 def boton_cargaArchivo_command():
     
     text_area.insert(tk.INSERT,"Hola:")
@@ -15,7 +15,9 @@ def boton_cargaArchivo_command():
 
 def boton_enviar_command():
     texto = mensaje.get(1.0,'end')
-    text_area.insert(tk.INSERT,"\n Usuario: "+texto)
+    text_area.insert(tk.INSERT,"\nUsuario: "+texto)
+    lexico = Analizador(texto)
+    lexico.Imprimir()
     
 
 
@@ -30,21 +32,7 @@ def boton_aceptarTexto_command():
         f.write(texto)
 
 def boton_buscar_reporte():
-    opcion = lista_reportes.get()
-    if opcion == "Reporte de token":
-        texto = text_area.get(1.0,'end')
-        lexico = Analizador(texto)
-        lexico.ReporteToken()
-    elif opcion == "Reporte de errores":
-        texto = text_area.get(1.0,'end')
-        lexico = Analizador(texto)
-        lexico.ReporteErrores()
-    elif opcion == "Manual de Usuarios":
-        webbrowser.open('Manual de Usuario.pdf') 
-    elif opcion == "Manual Técnico":
-        webbrowser.open('Manual Tecnico.pdf')
-    else:
-        None
+    pass
 
 root = Tk()
 root.title("Menú Principal")

@@ -39,42 +39,7 @@ class Analizador:
             i += 1
             #Manejo inicial
             if self.estado == 1:
-                if actual == '~':
-                    self.estado = 1
-                    self.columna += 1
-                    self.lexema += actual
-                    self.AddToken(tipos.VIRGULILLA)
-                elif actual == '>':
-                    self.estado = 1
-                    self.columna += 1
-                    self.lexema += actual
-                    self.AddToken(tipos.RIGHT_ANGLE)
-                elif actual == '<':
-                    self.estado = 1
-                    self.columna += 1
-                    self.lexema += actual
-                    self.AddToken(tipos.LEFT_ANGLE)
-                elif actual == '[':
-                    self.estado = 1
-                    self.columna += 1
-                    self.lexema += actual
-                    self.AddToken(tipos.CORCHETE_IZQ)
-                elif actual == ']':
-                    self.estado = 1
-                    self.columna += 1
-                    self.lexema += actual
-                    self.AddToken(tipos.CORCHETE_DER)
-                elif actual == ',':
-                    self.estado = 1
-                    self.columna += 1
-                    self.lexema += actual
-                    self.AddToken(tipos.COMMMA)
-                elif actual == ':':
-                    self.estado = 1
-                    self.columna += 1
-                    self.lexema += actual
-                    self.AddToken(tipos.COLON)
-                elif actual.isalpha():
+                if actual.isalpha():
                     self.estado = 2
                     self.columna += 1
                     self.lexema += actual
@@ -82,10 +47,16 @@ class Analizador:
                     self.estado = 3
                     self.columna += 1
                     self.lexema += actual
-                elif actual == "'":
+                elif actual.isdigit():
                     self.estado = 4
                     self.columna += 1
                     self.lexema += actual
+                elif actual == "-":
+                    self.estado = 1
+                    self.columna += 1
+                    self.lexema += actual
+                    self.AddToken(tipos.F)
+                
                 elif actual == ' ':
                     self.columna +=1
                     self.estado = 1
@@ -133,18 +104,35 @@ class Analizador:
                     self.lexema += actual
                 elif actual == '"':
                     self.estado = 4
+                    self.columna +=1
                     self.lexema += actual
-                    self.AddToken(tipos.CHAIN)
-            #Manejo de Cadenas
-            elif self.estado == 4:
-                if actual != "'":
+                    self.AddToken(tipos.CADENA)
+            
+            if self.estado == 4:
+                if actual.isdigit():
                     self.estado = 4
                     self.columna +=1
                     self.lexema += actual
-                elif actual == "'":
-                    self.estado = 4
+                    continue
+                if actual == "-":
+                    self.estado = 5
+                    self.columna +=1
                     self.lexema += actual
-                    self.AddToken(tipos.SIMPLE_CHAIN)
+                    continue
+                else:
+                    self.AddToken(tipos.NUMERO)
+                    i -= 1
+                    continue
+            
+            if self.estado == 5:
+                if actual.isdigit():
+                    self.estado = 5
+                    self.columna +=1
+                    self.lexema += actual
+                else: 
+                    self.AddToken(tipos.FECHA)
+                    i -= 1
+                    continue
 
     def AddToken(self,tipo):
         self.tokens.append(Token(self.lexema, tipo, self.fila, self.columna))
@@ -153,23 +141,59 @@ class Analizador:
     
     def Reservada(self):
         palabra = self.lexema.upper();
-        if palabra == 'TIPO':
-            self.tipo = Token.TIPO  
+        if palabra == 'RESULTADO':
+            self.tipo = Token.RESULTADO  
             return True
-        if palabra == 'VALOR':
-            self.tipo = Token.VALOR 
+        if palabra == 'VS':
+            self.tipo = Token.VS 
             return True
-        if palabra == 'FONDO':
-            self.tipo = Token.FONDO
+        if palabra == 'TEMPORADA':
+            self.tipo = Token.TEMPORADA
             return True
-        if palabra == 'VALORES':
-            self.tipo = Token.VALORES
+        if palabra == 'JORNADA':
+            self.tipo = Token.JORNADA
             return True
-        if palabra == 'NOMBRE':
-            self.tipo = Token.NOMBRE
+        if palabra == '-f':
+            self.tipo = Token.F
             return True
-        if palabra == 'EVENTO':
-            self.tipo = Token.EVENTO
+        if palabra == 'GOLES':
+            self.tipo = Token.GOLES
+            return True
+        if palabra == 'LOCAL':
+            self.tipo = Token.LOCAL
+            return True
+        if palabra == 'VISITANTE':
+            self.tipo = Token.VISITANTE
+            return True
+        if palabra == 'TOTAL':
+            self.tipo = Token.TOTAL
+            return True
+        if palabra == 'TABLA TEMPORADA':
+            self.tipo = Token.TABLA_TEMPORADA
+            return True
+        if palabra == 'PARTIDOS':
+            self.tipo = Token.PARTIDOS
+            return True
+        if palabra == '-ji':
+            self.tipo = Token.JI
+            return True
+        if palabra == '-jf':
+            self.tipo = Token.JF
+            return True
+        if palabra == 'TOP':
+            self.tipo = Token.TOP
+            return True
+        if palabra == '-n':
+            self.tipo = Token.N
+            return True
+        if palabra == 'SUPERIOR':
+            self.tipo = Token.SUPERIOR
+            return True
+        if palabra == 'INFERIOR':
+            self.tipo = Token.INFERIOR
+            return True
+        if palabra == 'ADIOS':
+            self.tipo = Token.ADIOS
             return True
         return False
     

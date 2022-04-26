@@ -5,23 +5,29 @@ class Token():
     columna = 0
 
     #ENUM
-    VIRGULILLA = 1
-    RIGHT_ANGLE = 2
-    LEFT_ANGLE = 3
-    CORCHETE_IZQ = 4
-    CORCHETE_DER = 5
-    COLON = 6
-    COMMMA = 7
-    CHAIN = 8
-    SIMPLE_CHAIN = 9
-    TIPO = 10
-    VALOR = 11
-    FONDO = 12
-    VALORES = 13
-    EVENTO = 14
-    WORDS = 15
-    UNKNOWN = 16
-    NOMBRE = 17
+    RESULTADO = 1
+    VS = 2
+    TEMPORADA = 3
+    JORNADA = 4
+    F = 5
+    GOLES = 6
+    LOCAL = 7
+    VISITANTE = 8
+    TOTAL = 9
+    TABLA_TEMPORADA = 10
+    PARTIDOS = 11
+    JI = 12
+    JF = 13
+    TOP = 14
+    N = 15
+    SUPERIOR = 16
+    INFERIOR = 17
+    ADIOS = 18
+    CADENA = 19
+    NUMERO = 20
+    FECHA = 21
+    WORDS = 22
+    UNKNOWN = 23
 
     #Constructor de la clase
     def __init__(self,lexema,tipo,fila,columna):
@@ -40,37 +46,51 @@ class Token():
         return self.columna
 
     def getTipo(self):
-        if self.tipo == self.VIRGULILLA:
-            return 'VIRGULILLA'
-        elif self.tipo == self.RIGHT_ANGLE:
-            return 'RIGHT_ANGLE'
-        elif self.tipo == self.LEFT_ANGLE:
-            return 'LEFT_ANGLE'
-        elif self.tipo == self.CORCHETE_IZQ:
-            return 'CORCHETE_IZQ'
-        elif self.tipo == self.CORCHETE_DER:
-            return 'CORCHETE_DER'
-        elif self.tipo == self.COLON:
-            return 'COLON'
-        elif self.tipo == self.COMMMA:
-            return "COMMMA"
-        elif self.tipo == self.CHAIN:
-            return "CHAIN"
-        elif self.tipo == self.SIMPLE_CHAIN:
-            return "SIMPLE_CHAIN"
-        elif self.tipo == self.TIPO:
-            return "TIPO"
-        elif self.tipo == self.VALOR:
-            return "VALOR"
-        elif self.tipo == self.FONDO:
-            return "FONDO"
-        elif self.tipo == self.VALORES:
-            return "VALORES"
-        elif self.tipo == self.EVENTO:
-            return "EVENTO"
+        if self.tipo == self.RESULTADO:
+            return 'RESULTADO'
+        elif self.tipo == self.VS:
+            return 'VS'
+        elif self.tipo == self.TEMPORADA:
+            return 'TEMPORADA'
+        elif self.tipo == self.JORNADA:
+            return 'JORNADA'
+        elif self.tipo == self.F:
+            return 'F'
+        elif self.tipo == self.GOLES:
+            return 'GOLES'
+        elif self.tipo == self.LOCAL:
+            return 'LOCAL'
+        elif self.tipo == self.VISITANTE:
+            return 'VISITANTE'
+        elif self.tipo == self.TOTAL:
+            return 'TOTAL'
+        elif self.tipo == self.TABLA_TEMPORADA:
+            return 'TABLA_TEMPORADA'
+        elif self.tipo == self.PARTIDOS:
+            return 'PARTIDOS'
+        elif self.tipo == self.JI:
+            return 'JI'
+        elif self.tipo == self.JF:
+            return 'JF'
+        elif self.tipo == self.TOP:
+            return 'TOP'
+        elif self.tipo == self.N:
+            return 'N'
+        elif self.tipo == self.SUPERIOR:
+            return 'SUPERIOR'
+        elif self.tipo == self.INFERIOR:
+            return 'INFERIOR'
+        elif self.tipo == self.ADIOS:
+            return 'ADIOS'
+        elif self.tipo == self.CADENA:
+            return 'CADENA'
+        elif self.tipo == self.NUMERO:
+            return 'NUMERO'
+        elif self.tipo == self.FECHA:
+            return 'FECHA'
+        elif self.tipo == self.WORDS:
+            return 'WORDS'
         elif self.tipo == self.WORDS:
             return "WORDS"
         elif self.tipo == self.UNKNOWN:
             return "UNKNOWN"
-        elif self.tipo == self.NOMBRE:
-            return "NOMBRE"
