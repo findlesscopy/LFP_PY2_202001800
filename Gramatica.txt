@@ -1,0 +1,33 @@
+<Inicio>::= <Resultado> <Repetir>
+        | <Jornada> <Repetir>
+        | <Goles> <Repetir>
+        | <Tabla Temporada> <Repetir>
+        | <Partidos> <Repetir>
+        | <Top> <Repetir>
+        | <Adios> <Repetir>
+
+<Repetir>::= <Resultado> <Repetir>
+        | <Jornada> <Repetir>
+        | <Goles> <Repetir>
+        | <Tabla Temporada> <Repetir>
+        | <Partidos> <Repetir>
+        | <Top> <Repetir>
+        | <Adios> <Repetir>
+        | Epsilon 
+
+<Resultado>::= tk_Resultado tk_Equipo tk_VS tk_Equipo tk_Temporada tk_Fecha
+<Jornada>::= tk_Jornada tk_Numero tk_Temporada tk_Fecha tk_FArchivo tk_words
+<Goles>::= tk_Goles <CondionGoles> tk_Equipo tk_Temporada tk_Fecha
+
+<CondionGoles>::= tk_Local
+            | tk_Visitante
+            | tk_Total
+
+<Tabla Temporada>::= tk_TablaTemporada tk_Temporada tk_Fecha tk_FArchivo tk_words
+<Partidos>::= tk_Partidos tk_Equipo tk_Temporada tk_Fecha tk_FArchivo tk_words tk_JI tk_Numero tK_JF tk_Numero
+<Top>::= tk_Top <CondicionTop> tk_Temporada tk_Fecha tk_N tk_Numero
+
+<CondicionTop>::= tk_Superior
+            | tk_Inferior
+
+<Adios>::= tk_Adios 

@@ -1,11 +1,11 @@
-from lib2to3.pgen2 import token
-import turtle
 from Token import Token
+from TypeToken import TypeToken
 from tkinter import messagebox
 import webbrowser
 from Data import Data
 
 class Analizador:
+    tipo = TypeToken.UNKNOWN
     #Guarda lo que llevo
     lexema = ''
     #Lista de token
@@ -13,21 +13,18 @@ class Analizador:
     #Estado en el que se encuentra
     estado = 1
     #Fila en la que se encuentra
-    fila = 0
+    fila = 1
     #COlumna en la que se encuentra
     columna = 0
     #Bool para errores
     generar = False
 
-    elementos = []
-    entrada2 = ''
     def __init__(self, entrada):
-        self.entrada2 = entrada
         self.lexema = ''
         self.tokens = []
         self.estado = 1
         self.fila = 1
-        self.columna = 1
+        self.columna = 0
         self.generar = True
         tipos = Token("lexema",-1,-1,-1)
 
@@ -82,7 +79,7 @@ class Analizador:
                     print('Analisis terminado')
                 else:
                     self.lexema += actual
-                    self.AddToken(tipos.UNKNOWN)
+                    self.AddToken(TypeToken.UNKNOWN.name)
                     self.columna += 1
                     self.generar = False
                     messagebox.showinfo(message="Ha ocurrido un error", title="Error")
@@ -100,7 +97,7 @@ class Analizador:
                         i -= 1
                         continue
                     else:
-                        self.AddToken(tipos.WORDS)
+                        self.AddToken(TypeToken.WORDS.name)
                         i -= 1
                         continue
                         
@@ -111,7 +108,7 @@ class Analizador:
                     self.columna += 1
                     self.lexema += actual
                 else: 
-                    self.AddToken(tipos.NUMERO)
+                    self.AddToken(TypeToken.NUMERO.name)
                     i -= 1
                     continue
             
@@ -125,7 +122,7 @@ class Analizador:
                     self.estado = 4
                     self.columna += 1
                     self.lexema += actual
-                    self.AddToken(tipos.FECHA)
+                    self.AddToken(TypeToken.FECHA.name)
                     continue
 
             #Manejo de Cadenas
@@ -138,7 +135,7 @@ class Analizador:
                     self.estado = 5
                     self.columna += 1
                     self.lexema += actual
-                    self.AddToken(tipos.EQUIPO)
+                    self.AddToken(TypeToken.EQUIPO.name)
                     continue    
             
             #Manejo de Banderas
@@ -154,7 +151,7 @@ class Analizador:
                         continue
                     else:
                         i -= 1
-                        self.AddToken(tipos.WORDS)
+                        self.AddToken(TypeToken.WORDS.name)
                         continue
             
 
@@ -162,20 +159,21 @@ class Analizador:
         self.tokens.append(Token(self.lexema, tipo, self.fila, self.columna))
         self.lexema = ""
         self.estado = 1
+        self.tipo = TypeToken.UNKNOWN
     
     def Banderas(self):
         bandera = self.lexema
         if bandera == "-f":
-            self.tipo = Token.F
+            self.tipo = TypeToken.F.name
             return True
         if bandera == "-ji":
-            self.tipo = Token.JI
+            self.tipo = TypeToken.JI.name
             return True
         if bandera == "-jf":
-            self.tipo = Token.JF
+            self.tipo = TypeToken.JF.name
             return True
         if bandera == "-n":
-            self.tipo = Token.N
+            self.tipo = TypeToken.N.name
             return True
         return False
 
@@ -183,46 +181,46 @@ class Analizador:
     def Reservada(self):
         palabra = self.lexema.upper();
         if palabra == 'RESULTADO':
-            self.tipo = Token.RESULTADO  
+            self.tipo = TypeToken.RESULTADO.name  
             return True
         if palabra == 'VS':
-            self.tipo = Token.VS 
+            self.tipo = TypeToken.VS.name
             return True
         if palabra == 'TEMPORADA':
-            self.tipo = Token.TEMPORADA
+            self.tipo = TypeToken.TEMPORADA.name
             return True
         if palabra == 'JORNADA':
-            self.tipo = Token.JORNADA
+            self.tipo = TypeToken.JORNADA.name
             return True
         if palabra == 'GOLES':
-            self.tipo = Token.GOLES
+            self.tipo = TypeToken.GOLES.name
             return True
         if palabra == 'LOCAL':
-            self.tipo = Token.LOCAL
+            self.tipo = TypeToken.CONDICION_GOLES.name
             return True
         if palabra == 'VISITANTE':
-            self.tipo = Token.VISITANTE
+            self.tipo = TypeToken.CONDICION_GOLES.name
             return True
         if palabra == 'TOTAL':
-            self.tipo = Token.TOTAL
+            self.tipo = TypeToken.CONDICION_GOLES.name
             return True
         if palabra == 'TABLA':
-            self.tipo = Token.TABLA_TEMPORADA
+            self.tipo = TypeToken.TABLA_TEMPORADA.name
             return True
         if palabra == 'PARTIDOS':
-            self.tipo = Token.PARTIDOS
+            self.tipo = TypeToken.PARTIDOS.name
             return True
         if palabra == 'TOP':
-            self.tipo = Token.TOP
+            self.tipo = TypeToken.TOP.name
             return True
         if palabra == 'SUPERIOR':
-            self.tipo = Token.SUPERIOR
+            self.tipo = TypeToken.CONDICION_TOP.name
             return True
         if palabra == 'INFERIOR':
-            self.tipo = Token.INFERIOR
+            self.tipo = TypeToken.CONDICION_TOP.name
             return True
         if palabra == 'ADIOS':
-            self.tipo = Token.ADIOS
+            self.tipo = TypeToken.ADIOS.name
             return True
         return False
     
@@ -230,14 +228,14 @@ class Analizador:
         print("-------------Tokens--------------")
         tipos = Token("lexema", -1, -1, -1)
         for x in self.tokens:
-            if x.tipo != tipos.UNKNOWN:
-                print(x.getLexema()," --> ",x.getTipo(),' --> ',x.getFila(), ' --> ',x.getColumna())
+            if str(x.tipo) != "UNKNOWN":
+                print(x.lexema," --> ",str(x.tipo),' --> ',str(x.fila), ' --> ',str(x.columna))
     
     def ImprimirErrores(self):
         print("-------------Errores--------------")
         tipos = Token("lexema", -1, -1, -1)
         for x in self.tokens:
-            if x.tipo == tipos.UNKNOWN:
-                print(x.getLexema()," --> ",x.getFila(), ' --> ',x.getColumna(),'--> Error Lexico')
+            if str(x.tipo) == "UNKNOWN":
+                print(x.lexema," --> ",str(x.tipo),' --> ',str(x.fila), ' --> ',str(x.columna),'--> Error Lexico')
     
     

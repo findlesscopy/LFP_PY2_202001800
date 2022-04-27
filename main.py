@@ -5,6 +5,7 @@ import tkinter.font as tkFont
 from tkinter import filedialog
 from helpers import Lector_Archivos
 from Analizador import Analizador
+from Sintactico import Sintactico
 import webbrowser
 
 Lector_Archivos()
@@ -18,6 +19,8 @@ def boton_enviar_command():
     text_area.insert(tk.INSERT,"\nUsuario: "+texto)
     lexico = Analizador(texto)
     lexico.Imprimir()
+    lexico.ImprimirErrores()
+    sintactico = Sintactico(lexico.tokens)
     
 
 
