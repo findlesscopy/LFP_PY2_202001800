@@ -23,7 +23,7 @@ class Token():
     SUPERIOR = 16
     INFERIOR = 17
     ADIOS = 18
-    CADENA = 19
+    EQUIPO = 19
     NUMERO = 20
     FECHA = 21
     WORDS = 22
@@ -82,8 +82,8 @@ class Token():
             return 'INFERIOR'
         elif self.tipo == self.ADIOS:
             return 'ADIOS'
-        elif self.tipo == self.CADENA:
-            return 'CADENA'
+        elif self.tipo == self.EQUIPO:
+            return 'EQUIPO'
         elif self.tipo == self.NUMERO:
             return 'NUMERO'
         elif self.tipo == self.FECHA:
