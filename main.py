@@ -11,6 +11,7 @@ from Sintactico import Sintactico
 from tkinter import messagebox
 from Data import Tabla
 import webbrowser
+import sys
 
 
 
@@ -42,7 +43,7 @@ def boton_limpiarLogTokens_command():
 def boton_enviar_command():
     data = Lector_Archivos()
     texto = mensaje.get(1.0,'end')
-    text_area.insert(tk.INSERT,"\nUsuario: "+texto)
+    text_area.insert(tk.INSERT,"\n Usuario: "+texto)
     lexico = Analizador(texto)
     lexico.Imprimir()
     lexico.ImprimirErrores()
@@ -57,11 +58,11 @@ def boton_enviar_command():
             equipo2 = equipo2.replace('"',"")
             fecha = fecha.replace("<","")
             fecha = fecha.replace(">","")
-            for i in range(len(data)):
-                if str(data[i].temporada) == fecha:
-                    if str(data[i].local) == equipo1 and str(data[i].visitante) == equipo2:
-                            print(i,"hOLA")
-                            text_area.insert(tk.INSERT,"\nBot: "+"El partido se llevó a cabo el:"+data[i].fecha+" "+equipo1+" "+str(data[i].marcador_local)+" - "+str(data[i].marcador_visitante)+" "+equipo2)
+            for j in range(len(data)):
+                if str(data[j].temporada) == fecha:
+                    if str(data[j].local) == equipo1 and str(data[j].visitante) == equipo2:
+                            #print(i,"hOLA")
+                            text_area.insert(tk.INSERT,"\n Bot: "+"El partido se llevó a cabo el:"+data[j].fecha+" "+equipo1+" "+str(data[j].marcador_local)+" - "+str(data[j].marcador_visitante)+" "+equipo2)
         elif lexico.tokens[i].tipo == TypeToken.JORNADA.name:
             jornada = str(lexico.tokens[i+1].lexema)
             fecha = str(lexico.tokens[i+3].lexema)
@@ -144,6 +145,9 @@ def boton_enviar_command():
                 text_area.insert(tk.INSERT,"\nBot: "+"Los goles anotados por el "+equipo+" en la temporada "+fecha+" fueron "+str(sumagoles_local+sumagoles_visitante))
 
         elif lexico.tokens[i].tipo == TypeToken.TABLA_TEMPORADA.name:
+            local = 0
+            visitante = 0
+            total = 0
             fecha = str(lexico.tokens[i+2].lexema)
             fecha = fecha.replace("<","")
             fecha = fecha.replace(">","")
@@ -152,14 +156,74 @@ def boton_enviar_command():
             for i in range(len(data)):
                 if str(data[i].temporada) == fecha:
                     if int(data[i].marcador_local) > int(data[i].marcador_visitante):
-                        puntos.append(Tabla(data[i].local,3,data[i].visitante,0))
+                        puntos.append(Tabla(data[i].local,3))
+                        local += 3
+                        puntos.append(Tabla(data[i].visitante,0))
+                        visitante += 0
                     elif int(data[i].marcador_local) < int(data[i].marcador_visitante):
-                        puntos.append(Tabla(data[i].local,0,data[i].visitante,3))
+                        puntos.append(Tabla(data[i].local,0))
+                        local += 0
+                        puntos.append(Tabla(data[i].visitante,3))
+                        visitante += 3
                     elif int(data[i].marcador_local) == int(data[i].marcador_visitante):
-                        puntos.append(Tabla(data[i].local,1,data[i].visitante,1))
-                        
-            for i in range(len(puntos)):
-                if 
+                        puntos.append(Tabla(data[i].local,1))
+                        local += 1
+                        puntos.append(Tabla(data[i].visitante,1))
+                        visitante += 1
+            puntos.sort(key=lambda x:x.equipo, reverse=False)
+
+            print(puntos)         
+
+        elif lexico.tokens[i].tipo == TypeToken.PARTIDOS.name:
+            equipo = str(lexico.tokens[i+1].lexema)
+            equipo = equipo.replace('"',"")
+            fecha = str(lexico.tokens[i+3].lexema)
+            fecha = fecha.replace("<","")
+            fecha = fecha.replace(">","")
+            nombre_archivo = str(lexico.tokens[i+5].lexema)
+            jornadaInicial = int(lexico.tokens[i+7].lexema)
+            jornadaFinal = int(lexico.tokens[i+9].lexema)
+            text_area.insert(tk.INSERT,"\nBot: "+"Generando archivo de resultados del "+equipo+" temporada "+fecha+ " Jornada "+str(jornadaInicial)+" - " + str(jornadaFinal))
+            messagebox.showinfo(message="Se ha genera el reporte del Equipo", title="Jornada")
+            f = open(nombre_archivo+'.html','w')
+            f.write("<!doctype html>")
+            f.write("<html lang=\"en\">")
+            f.write("<head>")
+            f.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">")
+            f.write("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+            f.write("<title>Reporte del Equipo</title>")
+            f.write("<style>"
+                "body {background-color: #F5EFB1;font-family: \"Lucida Console\", \"Courier New\", monospace;}"
+                "h1 {background-color: #87DABF;}"
+                "table, th, td {border: 1px solid black; text-align: center}""</style>")
+            f.write("</head>")
+            f.write("<body>")
+            f.write("<H1><center>Resultados</center></H1>")
+            f.write("<center><table><tr><th>Local</th><th>Goles</th><th>Goles</th><th>Visitante</th>")
+            for i in range(len(data)):
+                if str(data[i].temporada) == fecha:
+                    if int(data[i].jornada) >= jornadaInicial and int(data[i].jornada) <= jornadaFinal:
+                        if str(data[i].local) == equipo:
+                            f.write("<tr>")
+                            f.write("<center><td><h4>" + equipo + "</td></h4>"+"<td><h4>" + str(data[i].marcador_local) +"</td></h4>"+"<td><h4>" + str(data[i].marcador_visitante) +"</td></h4>"+ "<td><h4>" + str(data[i].visitante) +"</td></h4>")
+                            f.write("</tr>") 
+                            print(equipo+" "+str(data[i].marcador_local)+" VS "+str(data[i].marcador_visitante)+" "+str(data[i].visitante))
+                        if str(data[i].visitante) == equipo:
+                            f.write("<tr>")
+                            f.write("<center><td><h4>" + str(data[i].local) + "</td></h4>"+"<td><h4>" + str(data[i].marcador_local) +"</td></h4>"+"<td><h4>" + str(data[i].marcador_visitante) +"</td></h4>"+ "<td><h4>" + equipo +"</td></h4>")
+                            f.write("</tr>")  
+                            print(str(data[i].local+" "+str(data[i].marcador_local)+" VS "+str(data[i].marcador_visitante)+" "+equipo))
+        
+            f.write("</table></center>")
+            f.write("</body>")
+            f.write("</html>")
+            f.close()
+            webbrowser.open(nombre_archivo+'.html')
+            
+
+        elif lexico.tokens[i].tipo == TypeToken.ADIOS.name:
+            messagebox.showinfo(message="Cerrando el programa :D",title="Despedida")
+            sys.exit()
 
 def boton_aceptarTexto_command():
     Tk().withdraw()
