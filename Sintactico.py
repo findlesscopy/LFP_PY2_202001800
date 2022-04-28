@@ -1,5 +1,6 @@
 from Token import Token
 from TypeToken import TypeToken
+
 class Sintactico:
     preanalisis = TypeToken.UNKNOWN
     pos = 0

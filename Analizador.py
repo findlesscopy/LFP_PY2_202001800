@@ -238,4 +238,74 @@ class Analizador:
             if str(x.tipo) == "UNKNOWN":
                 print(x.lexema," --> ",str(x.tipo),' --> ',str(x.fila), ' --> ',str(x.columna),'--> Error Lexico')
     
+    def ReporteErrores(self):
+        
+        messagebox.showinfo(message="Se ha genera el reporte de Errores", title="Reporte")
+        f = open('Reporte Errores.html','w')
+        f.write("<!doctype html>")
+        f.write("<html lang=\"en\">")
+        f.write("<head>")
+        f.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">")
+        f.write("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+        f.write("<title>Reporte del Tokens</title>")
+        f.write("<style>"
+            "body {background-color: #F5EFB1;font-family: \"Lucida Console\", \"Courier New\", monospace;}"
+            "h1 {background-color: #87DABF;}"
+            "table, th, td {border: 1px solid black; text-align: center}""</style>")
+        f.write("</head>")
+        f.write("<body>")
+        f.write("<H1><center>REPORTE DE ERRORES LEXICOS</center></H1>")
+        f.write("<center><table><tr><th>No. </th><th>Símbolo</th><th>Tipo</th><th>Fila</th><th>Columna</th>")
+        tipos = Token("lexema", -1, -1, -1)
+        i=0
+        for x in self.tokens:
+            i+=1
+            if str(x.tipo) == "UNKNOWN":
+                f.write("<tr>")
+                f.write("<center><td><h4>" + str(i) + "</td></h4>"+"<td><h4>" + str(x.lexema ) +"</td></h4>"+"<td><h4>" + str(x.tipo) +"</td></h4>"+ "<td><h4>" + str(x.fila) +"</td></h4>"+ "<td><h4>" + str(x.columna) +"</td></h4>"+"</center>")
+                f.write("</tr>")
+        f.write("</table></center>")
+        f.write("</body>")
+        f.write("</html>")
+        f.close()
+        webbrowser.open('Reporte Errores.html') 
     
+    def ReporteToken(self):
+        
+        messagebox.showinfo(message="Se ha genera el reporte de token", title="Reporte")
+        f = open('Reporte Token.html','w')
+        f.write("<!doctype html>")
+        f.write("<html lang=\"en\">")
+        f.write("<head>")
+        f.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">")
+        f.write("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+        f.write("<title>Reporte del Tokens</title>")
+        f.write("<style>"
+            "body {background-color: #F5EFB1;font-family: \"Lucida Console\", \"Courier New\", monospace;}"
+            "h1 {background-color: #87DABF;}"
+            "table, th, td {border: 1px solid black; text-align: center}""</style>")
+        f.write("</head>")
+        f.write("<body>")
+        f.write("<H1><center>REPORTE DE TOKENS</center></H1>")
+        f.write("<center><table><tr><th>No. </th><th>Símbolo</th><th>Tipo</th><th>Fila</th><th>Columna</th>")
+        tipos = Token("lexema", -1, -1, -1)
+        i=0
+        for x in self.tokens:
+            i+=1
+            if str(x.tipo) != "UNKNOWN":
+                f.write("<tr>")
+                f.write("<center><td><h4>" + str(i) + "</td></h4>"+"<td><h4>" + str(x.lexema ) +"</td></h4>"+"<td><h4>" + str(x.tipo) +"</td></h4>"+ "<td><h4>" + str(x.fila) +"</td></h4>"+ "<td><h4>" + str(x.columna) +"</td></h4>"+"</center>")
+                f.write("</tr>")
+        f.write("</table></center>")
+        f.write("</body>")
+        f.write("</html>")
+        f.close()
+        webbrowser.open('Reporte Token.html')
+    
+    def limpiarErrores(self):
+        messagebox.showinfo(message="Se ha limpiado el log de Errores", title="Reporte")
+        self.tokens.clear()
+
+    def limpiarTokens(self):
+        messagebox.showinfo(message="Se ha limpiado el log de Tokens", title="Reporte")
+        self.tokens.clear()
