@@ -1,3 +1,4 @@
+from operator import eq
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
@@ -7,6 +8,8 @@ from TypeToken import TypeToken
 from helpers import Lector_Archivos
 from Analizador import Analizador
 from Sintactico import Sintactico
+from tkinter import messagebox
+from Data import Tabla
 import webbrowser
 
 
@@ -59,7 +62,104 @@ def boton_enviar_command():
                     if str(data[i].local) == equipo1 and str(data[i].visitante) == equipo2:
                             print(i,"hOLA")
                             text_area.insert(tk.INSERT,"\nBot: "+"El partido se llevó a cabo el:"+data[i].fecha+" "+equipo1+" "+str(data[i].marcador_local)+" - "+str(data[i].marcador_visitante)+" "+equipo2)
+        elif lexico.tokens[i].tipo == TypeToken.JORNADA.name:
+            jornada = str(lexico.tokens[i+1].lexema)
+            fecha = str(lexico.tokens[i+3].lexema)
+            fecha = fecha.replace("<","")
+            fecha = fecha.replace(">","")
+            nombre_archivo = str(lexico.tokens[i+5].lexema)
+            text_area.insert(tk.INSERT,"\nBot: "+"Generando archivo de resultados jornada "+jornada+" temporada "+fecha)
+            messagebox.showinfo(message="Se ha genera el reporte de La Jornada", title="Jornada")
+            f = open(nombre_archivo+'.html','w')
+            f.write("<!doctype html>")
+            f.write("<html lang=\"en\">")
+            f.write("<head>")
+            f.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">")
+            f.write("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+            f.write("<title>Reporte del Tokens</title>")
+            f.write("<style>"
+                "body {background-color: #F5EFB1;font-family: \"Lucida Console\", \"Courier New\", monospace;}"
+                "h1 {background-color: #87DABF;}"
+                "table, th, td {border: 1px solid black; text-align: center}""</style>")
+            f.write("</head>")
+            f.write("<body>")
+            f.write("<H1><center>JORNADA</center></H1>")
+            f.write("<center><table><tr><th>Fecha </th><th>Local</th><th>Goles</th><th>Goles</th><th>Visitante</th>")
+            for i in range(len(data)):
+                if str(data[i].temporada) == fecha:
+                    if str(data[i].jornada) == jornada:
 
+                        f.write("<tr>")
+                        f.write("<center><td><h4>" + str(data[i].fecha) + "</td></h4>"+"<td><h4>" + str(data[i].local) +"</td></h4>"+"<td><h4>" + str(data[i].marcador_local) +"</td></h4>"+ "<td><h4>" + str(data[i].marcador_visitante) +"</td></h4>"+ "<td><h4>" + str(data[i].visitante) +"</td></h4>"+"</center>")
+                        f.write("</tr>")
+            f.write("</table></center>")
+            f.write("</body>")
+            f.write("</html>")
+            f.close()
+            webbrowser.open(nombre_archivo+'.html') 
+
+        elif lexico.tokens[i].tipo == TypeToken.GOLES.name:
+            condicion = str(lexico.tokens[i+1].lexema)
+            equipo = str(lexico.tokens[i+2].lexema)
+            equipo = equipo.replace('"',"")
+            fecha = str(lexico.tokens[i+4].lexema)
+            fecha = fecha.replace("<","")
+            fecha = fecha.replace(">","")
+            goles_local = []
+            goles_local1 = []
+            goles_visitante = []
+            goles_visitante1 = []
+            
+            if condicion == "LOCAL":
+                for i in range(len(data)):
+                    if str(data[i].temporada) == fecha:
+                        if equipo == str(data[i].local):
+                        
+                            goles_local.append(int(data[i].marcador_local))
+                            sumagoles_local = sum(goles_local)
+                            #print(goles_local)
+                text_area.insert(tk.INSERT,"\nBot: "+"Los goles anotados por el "+equipo+" de local en la temporada "+fecha+" fueron "+str(sumagoles_local))
+            elif condicion == "VISITANTE":
+                for i in range(len(data)):
+                    if str(data[i].temporada) == fecha:
+                        if equipo == str(data[i].visitante):
+                        
+                            goles_visitante.append(int(data[i].marcador_visitante))
+                            sumagoles_visitante = sum(goles_visitante)
+                            #print(goles_local)
+                text_area.insert(tk.INSERT,"\nBot: "+"Los goles anotados por el "+equipo+" de visitante en la temporada "+fecha+" fueron "+str(sumagoles_visitante))
+            elif condicion == "TOTAL":
+                for i in range(len(data)):
+                    if str(data[i].temporada) == fecha:
+                            if equipo == str(data[i].local):
+                        
+                                goles_local1.append(int(data[i].marcador_local))
+                                sumagoles_local = sum(goles_local1)
+                            elif equipo == str(data[i].visitante):
+                        
+                                goles_visitante1.append(int(data[i].marcador_visitante))
+                                sumagoles_visitante = sum(goles_visitante1)
+                                #print(goles_local)
+                        
+                text_area.insert(tk.INSERT,"\nBot: "+"Los goles anotados por el "+equipo+" en la temporada "+fecha+" fueron "+str(sumagoles_local+sumagoles_visitante))
+
+        elif lexico.tokens[i].tipo == TypeToken.TABLA_TEMPORADA.name:
+            fecha = str(lexico.tokens[i+2].lexema)
+            fecha = fecha.replace("<","")
+            fecha = fecha.replace(">","")
+            nombre_archivo = str(lexico.tokens[i+4])
+            puntos = []
+            for i in range(len(data)):
+                if str(data[i].temporada) == fecha:
+                    if int(data[i].marcador_local) > int(data[i].marcador_visitante):
+                        puntos.append(Tabla(data[i].local,3,data[i].visitante,0))
+                    elif int(data[i].marcador_local) < int(data[i].marcador_visitante):
+                        puntos.append(Tabla(data[i].local,0,data[i].visitante,3))
+                    elif int(data[i].marcador_local) == int(data[i].marcador_visitante):
+                        puntos.append(Tabla(data[i].local,1,data[i].visitante,1))
+                        
+            for i in range(len(puntos)):
+                if 
 
 def boton_aceptarTexto_command():
     Tk().withdraw()
