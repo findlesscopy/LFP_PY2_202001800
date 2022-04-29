@@ -194,7 +194,7 @@ def boton_enviar_command():
                         local += 1
                         puntos.append(Tabla(data[i].visitante,1))
                         visitante += 1
-                if str(data[i].temporada) == fecha:
+                
                     equipos.append(data[i].local)
             puntos.sort(key=lambda x:x.equipo, reverse=False)
             for element in equipos:
@@ -276,7 +276,106 @@ def boton_enviar_command():
             f.write("</html>")
             f.close()
             webbrowser.open(nombre_archivo+'.html')
+
+        elif lexico.tokens[i].tipo == TypeToken.TOP.name:
+            local = 0
+            visitante = 0
+            total = 0
+            condicion = str(lexico.tokens[i+1].lexema)
+            fecha = str(lexico.tokens[i+3].lexema)
+            fecha = fecha.replace("<","")
+            fecha = fecha.replace(">","")
+            numero = int(lexico.tokens[i+5].lexema)
+            puntos = []
+            equipos = []
+            equipos_total = []
+            tabla = []
+            text_area.insert(tk.INSERT,"\nBot: "+"Generando archivo de Top "+condicion+" Temporada "+fecha)
+            messagebox.showinfo(message="Se ha genera el reporte de Top"+condicion, title="TOP")
+            f = open('Top.html','w')
+            f.write("<!doctype html>")
+            f.write("<html lang=\"en\">")
+            f.write("<head>")
+            f.write(" <meta charset=\"utf-8\">")
+            f.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">")
+            f.write("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+            f.write("<title>Reporte Top</title>")
+            f.write("<style>"
+                "body {background-color: #F5EFB1;font-family: \"Lucida Console\", \"Courier New\", monospace;}"
+                "h1 {background-color: #87DABF;}"
+                "table, th, td {border: 1px solid black; text-align: center}""</style>")
+            f.write("</head>")
+            f.write("<body>")
+            f.write("<H1><center>Top</center></H1>")
+            f.write("<center><table><tr><th>Posición</th><th>Equipo</th><th>Puntos</th>")
+            for i in range(len(data)):
+                if str(data[i].temporada) == fecha:
+                    if int(data[i].marcador_local) > int(data[i].marcador_visitante):
+                        puntos.append(Tabla(data[i].local,3))
+                        local += 3
+                        puntos.append(Tabla(data[i].visitante,0))
+                        visitante += 0
+                    elif int(data[i].marcador_local) < int(data[i].marcador_visitante):
+                        puntos.append(Tabla(data[i].local,0))
+                        local += 0
+                        puntos.append(Tabla(data[i].visitante,3))
+                        visitante += 3
+                    elif int(data[i].marcador_local) == int(data[i].marcador_visitante):
+                        puntos.append(Tabla(data[i].local,1))
+                        local += 1
+                        puntos.append(Tabla(data[i].visitante,1))
+                        visitante += 1
+                
+                    equipos.append(data[i].local)
+            puntos.sort(key=lambda x:x.equipo, reverse=False)
+            for element in equipos:
+                if element not in equipos_total:
+                    equipos_total.append(element)
+            equipos_total.sort()
+            #print(puntos)
+            #print(equipos_total)
+            puntos_suma = []       
+            for x in equipos_total:
+                for y in range(len(puntos)):
+                    if x == str(puntos[y].equipo):
+                        puntos_suma.append(puntos[y].puntos)
+                        puntos_suma1 = sum(puntos_suma)
+                    else:
+                        
+                        puntos_suma.clear() 
+                tabla.append(Tabla_Ordenada(x,puntos_suma1))
+                    #tabla.append(Tabla_Ordenada(x,puntos_suma1))
+                    #puntos_suma.clear()
+            #print(puntos_suma1)
+            #print(repr(tabla))
+            if condicion == "SUPERIOR":
+
+                tabla.sort(key=lambda x:x.puntos, reverse=True)
             
+                for i in range(numero):
+                    
+                    f.write("<tr>")
+                    f.write("<center><td><h4>" + str(i+1) + "</td></h4>"+"<td><h4>" + str(tabla[i].equipo) +"</td></h4>"+"<td><h4>" + str(tabla[i].puntos) +"</td></h4></center>")
+                    f.write("</tr>")
+                f.write("</table></center>")
+                f.write("</body>")
+                f.write("</html>")
+                f.close()
+                webbrowser.open('Top.html') 
+                #print(tabla)
+            elif condicion == "INFERIOR":
+                tabla.sort(key=lambda x:x.puntos, reverse=False)
+            
+                for i in range(numero):
+                    f.write("<tr>")
+                    f.write("<center><td><h4>" + str(i+1) + "</td></h4>"+"<td><h4>" + str(tabla[i].equipo) +"</td></h4>"+"<td><h4>" + str(tabla[i].puntos) +"</td></h4></center>")
+                    f.write("</tr>")
+                f.write("</table></center>")
+                f.write("</body>")
+                f.write("</html>")
+                f.close()
+                webbrowser.open('Top.html') 
+                #print(tabla)
 
         elif lexico.tokens[i].tipo == TypeToken.ADIOS.name:
             messagebox.showinfo(message="Cerrando el programa :D",title="Despedida")
@@ -292,8 +391,11 @@ def boton_aceptarTexto_command():
         f.truncate(0)
         f.write(texto)
 
-def boton_buscar_reporte():
-    pass
+def boton_manualUsuario_command():
+    webbrowser.open('Manual de Usuario.pdf')
+
+def boton_manualTecnico_command():
+    webbrowser.open('Manual Tecnico.pdf')
 
 root = Tk()
 root.title("Menú Principal")
@@ -354,14 +456,14 @@ boton_manualUsuario["font"] = ft
 boton_manualUsuario["justify"] = "center"
 boton_manualUsuario["text"] = "Manual de Usuario"
 boton_manualUsuario.place(x=460,y=260,width=120,height=30)
-boton_manualUsuario["command"] = boton_buscar_reporte 
+boton_manualUsuario["command"] = boton_manualUsuario_command 
 
 boton_manualTecnico=tk.Button(root)
 boton_manualTecnico["font"] = ft
 boton_manualTecnico["justify"] = "center"
 boton_manualTecnico["text"] = "Manual Técnico"
 boton_manualTecnico.place(x=460,y=310,width=120,height=30)
-boton_manualTecnico["command"] = boton_buscar_reporte 
+boton_manualTecnico["command"] = boton_manualTecnico_command 
 
 label2=tk.Label(root)
 label2["font"] = ft
