@@ -1,15 +1,18 @@
 from operator import eq
+from re import A
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 import tkinter.font as tkFont
 from tkinter import filedialog
+
+from numpy import append
 from TypeToken import TypeToken
 from helpers import Lector_Archivos
 from Analizador import Analizador
 from Sintactico import Sintactico
 from tkinter import messagebox
-from Data import Tabla
+from Data import Tabla, Tabla_Ordenada
 import webbrowser
 import sys
 
@@ -153,6 +156,9 @@ def boton_enviar_command():
             fecha = fecha.replace(">","")
             nombre_archivo = str(lexico.tokens[i+4])
             puntos = []
+            equipos = []
+            equipos_total = []
+            tabla = []
             for i in range(len(data)):
                 if str(data[i].temporada) == fecha:
                     if int(data[i].marcador_local) > int(data[i].marcador_visitante):
@@ -170,10 +176,32 @@ def boton_enviar_command():
                         local += 1
                         puntos.append(Tabla(data[i].visitante,1))
                         visitante += 1
+                if str(data[i].temporada) == fecha:
+                    equipos.append(data[i].local)
             puntos.sort(key=lambda x:x.equipo, reverse=False)
-
-            print(puntos)         
-
+            for element in equipos:
+                if element not in equipos_total:
+                    equipos_total.append(element)
+            equipos_total.sort()
+            #print(puntos)
+            #print(equipos_total)
+            puntos_suma = []       
+            for x in equipos_total:
+                for y in range(len(puntos)):
+                    if x == str(puntos[y].equipo):
+                        puntos_suma.append(puntos[y].puntos)
+                        puntos_suma1 = sum(puntos_suma)
+                    else:
+                        
+                        puntos_suma.clear() 
+                tabla.append(Tabla_Ordenada(x,puntos_suma1))
+                    #tabla.append(Tabla_Ordenada(x,puntos_suma1))
+                    #puntos_suma.clear()
+            #print(puntos_suma1)
+            #print(repr(tabla))
+            tabla.sort(key=lambda x:x.puntos, reverse=True)
+            print(tabla)
+        
         elif lexico.tokens[i].tipo == TypeToken.PARTIDOS.name:
             equipo = str(lexico.tokens[i+1].lexema)
             equipo = equipo.replace('"',"")
@@ -206,6 +234,7 @@ def boton_enviar_command():
                         if str(data[i].local) == equipo:
                             f.write("<tr>")
                             f.write("<center><td><h4>" + equipo + "</td></h4>"+"<td><h4>" + str(data[i].marcador_local) +"</td></h4>"+"<td><h4>" + str(data[i].marcador_visitante) +"</td></h4>"+ "<td><h4>" + str(data[i].visitante) +"</td></h4>")
+                            
                             f.write("</tr>") 
                             print(equipo+" "+str(data[i].marcador_local)+" VS "+str(data[i].marcador_visitante)+" "+str(data[i].visitante))
                         if str(data[i].visitante) == equipo:
