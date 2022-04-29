@@ -154,11 +154,29 @@ def boton_enviar_command():
             fecha = str(lexico.tokens[i+2].lexema)
             fecha = fecha.replace("<","")
             fecha = fecha.replace(">","")
-            nombre_archivo = str(lexico.tokens[i+4])
+            nombre_archivo = str(lexico.tokens[i+4].lexema)
             puntos = []
             equipos = []
             equipos_total = []
             tabla = []
+            text_area.insert(tk.INSERT,"\nBot: "+"Generando archivo de Tabla General Temporada "+fecha)
+            messagebox.showinfo(message="Se ha genera el reporte de Tabla General", title="Tabla General")
+            f = open(nombre_archivo+'.html','w')
+            f.write("<!doctype html>")
+            f.write("<html lang=\"en\">")
+            f.write("<head>")
+            f.write(" <meta charset=\"utf-8\">")
+            f.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">")
+            f.write("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+            f.write("<title>Reporte Tabla General</title>")
+            f.write("<style>"
+                "body {background-color: #F5EFB1;font-family: \"Lucida Console\", \"Courier New\", monospace;}"
+                "h1 {background-color: #87DABF;}"
+                "table, th, td {border: 1px solid black; text-align: center}""</style>")
+            f.write("</head>")
+            f.write("<body>")
+            f.write("<H1><center>Tabla General</center></H1>")
+            f.write("<center><table><tr><th>Posición</th><th>Equipo</th><th>Puntos</th>")
             for i in range(len(data)):
                 if str(data[i].temporada) == fecha:
                     if int(data[i].marcador_local) > int(data[i].marcador_visitante):
@@ -200,7 +218,17 @@ def boton_enviar_command():
             #print(puntos_suma1)
             #print(repr(tabla))
             tabla.sort(key=lambda x:x.puntos, reverse=True)
-            print(tabla)
+            
+            for i in range(len(tabla)):
+                f.write("<tr>")
+                f.write("<center><td><h4>" + str(i+1) + "</td></h4>"+"<td><h4>" + str(tabla[i].equipo) +"</td></h4>"+"<td><h4>" + str(tabla[i].puntos) +"</td></h4></center>")
+                f.write("</tr>")
+            f.write("</table></center>")
+            f.write("</body>")
+            f.write("</html>")
+            f.close()
+            webbrowser.open(nombre_archivo+'.html') 
+            #print(tabla)
         
         elif lexico.tokens[i].tipo == TypeToken.PARTIDOS.name:
             equipo = str(lexico.tokens[i+1].lexema)
